@@ -1,106 +1,108 @@
 import json
 import customtkinter as ctk
 
+class LagerApp:
+    def __init__(self):
+        self.window = ctk.CTk()
+        self.window.title("Lagerbestand GUI")
+        self.window.geometry("800x600")
+        self.window.grid_columnconfigure((0, 1), weight=1)
+        self.window.grid_rowconfigure((0, 1, 2), weight=1)
 
-# Callback function for the option menu
-def optionmenu_callback(choice):
-    print("optionmenu dropdown clicked:", choice)
+        self.load_options()
+        self.create_frames()
+        self.create_widgets()
 
-def toplevel_error(message):
-    toplevel = ctk.CTkToplevel(window)
-    toplevel.geometry("300x100")
-    toplevel.title("ERROR")
-    error_qty_is_not_num = ctk.CTkLabel(toplevel, text=message, font=("Arial", 20))
-    error_qty_is_not_num.pack(pady=10)
-    button_error = ctk.CTkButton(toplevel, text="OK", command=toplevel.destroy)
-    button_error.pack()
+    def load_options(self):
+        with open("lager.json", "r") as json_file:
+            data = json.load(json_file)
+            self.options = list(data.keys())
 
-def is_number(value):
-    return isinstance(value, (int, float))
-def get_qty_in():
-    return number_in.get("1.0", "end-1c")
+    def create_frames(self):
+        self.frame_in = self.create_frame(0, 0)
+        self.frame_out = self.create_frame(0, 1)
+        self.frame_view = self.create_frame(1, 0)
+        self.frame_export = self.create_frame(1, 1)
 
-def apply_in():
-    qty = get_qty_in()
-    if is_number(qty):
-        print("Apply Button 1 clicked:", qty)
-    else:
-        toplevel_error("QTY is not a number")
+    def create_frame(self, row, column):
+        frame = ctk.CTkFrame(self.window)
+        frame.grid(row=row, column=column, padx=10, pady=(10, 0), sticky="nsew")
+        return frame
 
+    def create_widgets(self):
+        self.create_input_section()
+        self.create_output_section()
+        self.create_view_section()
+        self.create_export_section()
 
+    def create_input_section(self):
+        label = self.create_label(self.frame_in, "IN")
+        optionmenu = self.create_option_menu(self.frame_in, self.options)
+        qty_label = self.create_label(self.frame_in, "QTY", font=("Arial", 12))
+        self.input_quantity = self.create_textbox(self.frame_in, 1, 100, "1-100")
+        apply_button = self.create_button(self.frame_in, "Apply", self.apply_input)
 
+    def create_output_section(self):
+        label = self.create_label(self.frame_out, "OUT")
+        optionmenu = self.create_option_menu(self.frame_out, self.options)
+        qty_label = self.create_label(self.frame_out, "QTY", font=("Arial", 12))
+        self.output_quantity = self.create_textbox(self.frame_out, 1, 100, "1-100")
+        apply_button = self.create_button(self.frame_out, "Apply", lambda: print("Hello World 2"))
 
+    def create_view_section(self):
+        view_button = self.create_button(self.frame_view, "View", lambda: print("View Button"))
 
-# Load the JSON file to get the options
-with open("lager.json", "r") as json_file:
-    data = json.load(json_file)
-    options = list(data.keys())  # Extract keys from the JSON as options
+    def create_export_section(self):
+        export_button = self.create_button(self.frame_export, "Export", lambda: print("Export Button"))
 
-# Create the window
-window = ctk.CTk()
-window.title("Lagerbestand GUI")
-window.geometry("800x600")
-window.grid_columnconfigure((0, 1), weight=1)
-window.grid_rowconfigure((0, 1, 2), weight=1)
+    def create_label(self, parent_frame, text, font=("Arial", 20)):
+        label = ctk.CTkLabel(parent_frame, text=text, font=font)
+        label.pack(pady=10)
+        return label
 
-# Create frames to organize the layout
-frame_in = ctk.CTkFrame(window)
-frame_in.grid(row=0, column=0, padx=10, pady=(10, 0), sticky="nsew")
+    def create_option_menu(self, parent_frame, values):
+        optionmenu = ctk.CTkOptionMenu(parent_frame, values=values, command=self.optionmenu_callback)
+        optionmenu.pack(pady=10)
+        return optionmenu
 
-frame_out = ctk.CTkFrame(window)
-frame_out.grid(row=0, column=1, padx=10, pady=(10, 0), sticky="nsew")
+    def create_textbox(self, parent_frame, height, width, initial_text):
+        textbox = ctk.CTkTextbox(parent_frame, height=height, width=width)
+        textbox.insert(0.0, initial_text)
+        textbox.pack(pady=2)
+        return textbox
 
-frame_view = ctk.CTkFrame(window)
-frame_view.grid(row=1, column=0, padx=10, pady=(10, 0), sticky="nsew")
+    def create_button(self, parent_frame, text, command):
+        button = ctk.CTkButton(parent_frame, text=text, command=command)
+        button.pack()
+        return button
 
-frame_export = ctk.CTkFrame(window)
-frame_export.grid(row=1, column=1, padx=10, pady=(10, 0), sticky="nsew")
+    def apply_input(self):
+        qty = self.input_quantity.get("1.0", "end-1c")
+        if self.is_numeric(qty):
+            print("Apply Button clicked:", qty)
+        else:
+            self.show_error_popup("QTY is not a number")
 
-# Create widgets and add them to frames
+    def is_numeric(self, value):
+        return isinstance(value, (int, float))
 
-# Frame for IN section
-label = ctk.CTkLabel(frame_in, text="IN", font=("Arial", 20))
-label.pack(pady=10)
+    def optionmenu_callback(self, choice):
+        print("OptionMenu dropdown clicked:", choice)
 
-# Show the options in the OptionMenu
-optionmenu_in = ctk.CTkOptionMenu(frame_in, values=options, command=optionmenu_callback)
-optionmenu_in.pack(pady=10)
+    def show_error_popup(self, message):
+        error_popup = ctk.CTkToplevel(self.window)
+        error_popup.geometry("300x100")
+        error_popup.title("ERROR")
 
-qty_in = ctk.CTkLabel(frame_in, text="QTY", font=("Arial", 12))
-qty_in.pack(pady=2)
+        error_label = ctk.CTkLabel(error_popup, text=message, font=("Arial", 20))
+        error_label.pack(pady=10)
 
-number_in = ctk.CTkTextbox(frame_in, height=1, width=100)
-number_in.insert(0.0, "1-100")
-number_in.pack(pady=2)
+        ok_button = ctk.CTkButton(error_popup, text="OK", command=error_popup.destroy)
+        ok_button.pack()
 
-button = ctk.CTkButton(frame_in, text="Apply", command=apply_in)
-button.pack()
+    def run(self):
+        self.window.mainloop()
 
-# Frame for OUT section
-label2 = ctk.CTkLabel(frame_out, text="OUT", font=("Arial", 20))
-label2.pack(pady=10)
-
-# Show the options out the OptionMenu
-optionmenu_out = ctk.CTkOptionMenu(frame_out, values=options, command=optionmenu_callback)
-optionmenu_out.pack(pady=10)
-
-qty_out = ctk.CTkLabel(frame_out, text="QTY", font=("Arial", 12))
-qty_out.pack(pady=2)
-
-number_out = ctk.CTkTextbox(frame_out, height=1, width=100)
-number_out.insert(0.0, "1-100")
-number_out.pack(pady=2)
-
-button2 = ctk.CTkButton(frame_out, text="Apply", command=lambda: print("Hello World 2"))
-button2.pack()
-
-# Frame for view section
-view = ctk.CTkButton(frame_view, text="View", command=lambda: print("View Button"))
-view.pack()
-
-# Frame for export section
-export = ctk.CTkButton(frame_export, text="Export", command=lambda: print("Export Button"))
-export.pack()
-
-# Start the GUI event loop
-window.mainloop()
+if __name__ == "__main__":
+    app = LagerApp()
+    app.run()
