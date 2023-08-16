@@ -1,8 +1,13 @@
 import json
 import customtkinter as ctk
+import tkinter
+from tkinter import filedialog
 from datetime import datetime
+import pandas as pd
+import openpyxl
 
 local_json = "lager.json"
+
 
 class LagerApp:
     def __init__(self):
@@ -12,28 +17,43 @@ class LagerApp:
         self.window.grid_columnconfigure((0, 1), weight=1)
         self.window.grid_rowconfigure((0, 1, 2), weight=1)
 
-        self.load_options(local_json)
+        data = self.read_json(local_json)
+        self.load_options(data)
         self.create_frames()
-        self.create_widgets()
+        self.create_widgets(data)
 
-    def load_options(self, lager_json):
+    def read_json(self, lager_json):
         with open(lager_json, "r") as json_file:
             data = json.load(json_file)
-            self.options = list(data.keys())
             json_file.close()
+        return data
 
-    def view_output_func(self, lager_json):
-        with open(lager_json, "r") as json_file:
-            data = json.load(json_file)
-            now = datetime.now()
-            dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
-            formatted_data = dt_string + "\n"
-            for key, value in data.items():
-                formatted_key = key.replace("_", " ").replace("-", " ").title()
-                formatted_data += f"{formatted_key}: {value}\n"
-            json_file.close()
+    def load_options(self, data):
+        self.options = list(data.keys())
+
+    def view_output_func(self, data):
+        now = datetime.now()
+        dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
+        formatted_data = dt_string + "\n"
+        for key, value in data.items():
+            formatted_key = key.replace("_", " ").replace("-", " ").title()
+            formatted_data += f"{formatted_key}: {value}\n"
         return formatted_data
 
+    def export_to_excel(self, data):
+        # Construct a list of dictionaries with the desired structure
+        data_list = [{"Item": key, "Quantity": value} for key, value in data.items()]
+
+        # Create a DataFrame from the list of dictionaries
+        df = pd.DataFrame(data_list)
+
+        # Use file dialog to get the output path
+        tkinter.Tk().withdraw()  # Prevents an empty tkinter window from appearing
+        file_path = filedialog.asksaveasfilename(defaultextension=".xlsx", filetypes=[("Excel Files", "*.xlsx")])
+
+        # If the user didn't cancel the file dialog, save the DataFrame to Excel
+        if file_path:
+            df.to_excel(file_path, index=False)
 
     def create_frames(self):
         self.frame_in = self.create_frame(0, 0)
@@ -52,11 +72,11 @@ class LagerApp:
         frame.grid(row=row, column=column, columnspan=columnspan, padx=10, pady=(10, 0), sticky="nsew")
         return frame
 
-    def create_widgets(self):
+    def create_widgets(self, data):
         self.create_input_section()
         self.create_output_section()
-        self.create_view_section()
-        self.create_export_section()
+        self.create_view_section(data)
+        self.create_export_section(data)
 
     def create_input_section(self):
         label = self.create_label(self.frame_in, "IN")
@@ -72,14 +92,14 @@ class LagerApp:
         self.output_quantity = self.create_textbox(self.frame_out, 1, 100, "1-100")
         apply_button = self.create_button(self.frame_out, "Apply", lambda: print("Hello World 2"))
 
-    def create_view_section(self):
-        view_button = self.create_button(self.frame_view, "View", lambda: self.create_view_output())
+    def create_view_section(self, data):
+        view_button = self.create_button(self.frame_view, "View", lambda: self.create_view_output(data))
 
-    def create_export_section(self):
-        export_button = self.create_button(self.frame_export, "Export", lambda: print("Export Button"))
+    def create_export_section(self, data):
+        export_button = self.create_button(self.frame_export, "Export", lambda: self.export_to_excel(data))
 
-    def create_view_output(self):
-        view_output = self.create_label(self.frame_view_output, self.view_output_func(local_json), font=("Arial", 20))
+    def create_view_output(self, data):
+        view_output = self.create_label(self.frame_view_output, self.view_output_func(data), font=("Arial", 20))
 
     def create_label(self, parent_frame, text, font=("Arial", 20)):
         label = ctk.CTkLabel(parent_frame, text=text, font=font)
