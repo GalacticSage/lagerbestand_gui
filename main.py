@@ -1,5 +1,8 @@
 import json
 import customtkinter as ctk
+from datetime import datetime
+
+local_json = "lager.json"
 
 class LagerApp:
     def __init__(self):
@@ -9,24 +12,44 @@ class LagerApp:
         self.window.grid_columnconfigure((0, 1), weight=1)
         self.window.grid_rowconfigure((0, 1, 2), weight=1)
 
-        self.load_options()
+        self.load_options(local_json)
         self.create_frames()
         self.create_widgets()
 
-    def load_options(self):
-        with open("lager.json", "r") as json_file:
+    def load_options(self, lager_json):
+        with open(lager_json, "r") as json_file:
             data = json.load(json_file)
             self.options = list(data.keys())
+            json_file.close()
+
+    def view_output_func(self, lager_json):
+        with open(lager_json, "r") as json_file:
+            data = json.load(json_file)
+            now = datetime.now()
+            dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
+            formatted_data = dt_string + "\n"
+            for key, value in data.items():
+                formatted_key = key.replace("_", " ").replace("-", " ").title()
+                formatted_data += f"{formatted_key}: {value}\n"
+            json_file.close()
+        return formatted_data
+
 
     def create_frames(self):
         self.frame_in = self.create_frame(0, 0)
         self.frame_out = self.create_frame(0, 1)
         self.frame_view = self.create_frame(1, 0)
         self.frame_export = self.create_frame(1, 1)
+        self.frame_view_output = self.create_ScrollableFrame(2, 0, 2)
 
-    def create_frame(self, row, column):
+    def create_frame(self, row, column, ):
         frame = ctk.CTkFrame(self.window)
         frame.grid(row=row, column=column, padx=10, pady=(10, 0), sticky="nsew")
+        return frame
+
+    def create_ScrollableFrame(self, row, column, columnspan):
+        frame = ctk.CTkScrollableFrame(self.window)
+        frame.grid(row=row, column=column, columnspan=columnspan, padx=10, pady=(10, 0), sticky="nsew")
         return frame
 
     def create_widgets(self):
@@ -50,10 +73,13 @@ class LagerApp:
         apply_button = self.create_button(self.frame_out, "Apply", lambda: print("Hello World 2"))
 
     def create_view_section(self):
-        view_button = self.create_button(self.frame_view, "View", lambda: print("View Button"))
+        view_button = self.create_button(self.frame_view, "View", lambda: self.create_view_output())
 
     def create_export_section(self):
         export_button = self.create_button(self.frame_export, "Export", lambda: print("Export Button"))
+
+    def create_view_output(self):
+        view_output = self.create_label(self.frame_view_output, self.view_output_func(local_json), font=("Arial", 20))
 
     def create_label(self, parent_frame, text, font=("Arial", 20)):
         label = ctk.CTkLabel(parent_frame, text=text, font=font)
@@ -93,6 +119,7 @@ class LagerApp:
         error_popup = ctk.CTkToplevel(self.window)
         error_popup.geometry("300x100")
         error_popup.title("ERROR")
+        error_popup.attributes("-top", True)  # Set always on top
 
         error_label = ctk.CTkLabel(error_popup, text=message, font=("Arial", 20))
         error_label.pack(pady=10)
@@ -102,6 +129,7 @@ class LagerApp:
 
     def run(self):
         self.window.mainloop()
+
 
 if __name__ == "__main__":
     app = LagerApp()
