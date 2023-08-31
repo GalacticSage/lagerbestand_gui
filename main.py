@@ -1,7 +1,8 @@
 import customtkinter as ctk
 from lagerbestand_core import core
+import func as f
 
-local_json = "lager.json"
+local_json = f.read_selected_directory("selected_json.txt")
 
 class LagerApp:
     def __init__(self):
