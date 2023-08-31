@@ -1,14 +1,17 @@
 import tkinter as tk
 from tkinter import filedialog
 
+# Function to read the selected directory from a file
 def read_selected_directory(filename):
     try:
         with open(filename, 'r') as txt_file:
-            directory = txt_file.read()
-            return directory  # Remove leading/trailing whitespace, if any
+            directory = txt_file.read().strip()  # Remove leading/trailing whitespace
+            return directory
     except FileNotFoundError:
         select_json_and_save()  # Handle the case where the file doesn't exist
         return read_selected_directory(filename)  # Try again after the user has selected a file
+
+# Function to select a JSON file and save its path
 def select_json_and_save():
     def select_json_file():
         file_path = filedialog.askopenfilename(filetypes=[("JSON files", "*.json")])
@@ -25,7 +28,7 @@ def select_json_and_save():
     root = tk.Tk()
     root.title("JSON File Selector")
 
-    # Set an appropriate window size
+    # Set an appropriate window size and position
     window_width = 400
     window_height = 150
     screen_width = root.winfo_screenwidth()
@@ -48,4 +51,3 @@ def select_json_and_save():
 
     # Start the main GUI loop
     root.mainloop()
-
