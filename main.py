@@ -16,16 +16,16 @@ class LagerApp:
         self.window.grid_rowconfigure((0, 1, 2), weight=1)
 
         # Read JSON data from the local JSON file
-        data = core.read_json(local_json)
+        self.data = core.read_json(local_json)
 
         # Load options from the JSON data
-        self.load_options(data)
+        self.load_options(self.data)
 
         # Create frames for layout
         self.create_frames()
 
         # Create widgets within the frames
-        self.create_widgets(data)
+        self.create_widgets(self.data)
 
     def load_options(self, data):
         # Load available options from the JSON data
@@ -58,21 +58,52 @@ class LagerApp:
         self.create_view_section(data)
         self.create_export_section(data)
 
+    def apply_add_quantity(self):
+        # Get the selected item and quantity to add
+        selected_item = self.input_optionmenu.get()
+        qty_to_add = self.input_quantity.get("1.0", "end-1c")
+
+        # Check if the quantity to add is numeric
+        if self.is_numeric(qty_to_add):
+            # Increase the quantity in the data dictionary
+            core.increase_quantity(local_json, self.data, selected_item, int(qty_to_add))
+            # Display a success message
+            self.show_success_popup(f"Added {qty_to_add} of '{selected_item}' to the inventory.")
+        else:
+            self.show_error_popup("Quantity is not a number")
+
+    # Update the create_input_section method to add the "Add Quantity" button
     def create_input_section(self):
         # Create widgets for the input section
         label = self.create_label(self.frame_in, "IN")
-        optionmenu = self.create_option_menu(self.frame_in, self.options)
+        self.input_optionmenu = self.create_option_menu(self.frame_in, self.options)
         qty_label = self.create_label(self.frame_in, "QTY", font=("Arial", 12))
         self.input_quantity = self.create_textbox(self.frame_in, 1, 100, "1-100")
-        apply_button = self.create_button(self.frame_in, "Apply", self.apply_input)
+        apply_button = self.create_button(self.frame_in, "Add Quantity", self.apply_add_quantity)
 
+    def apply_decrease_quantity(self):
+        # Get the selected item and quantity to decrease
+        selected_item = self.output_optionmenu.get()
+        qty_to_decrease = self.output_quantity.get("1.0", "end-1c")
+
+        # Check if the quantity to decrease is numeric
+        if self.is_numeric(qty_to_decrease):
+            # Decrease the quantity in the data dictionary
+            core.decrease_quantity(local_json, self.data, selected_item, int(qty_to_decrease))
+            # Display a success message
+            self.show_success_popup(f"Decreased {qty_to_decrease} of '{selected_item}' from the inventory.")
+        else:
+            self.show_error_popup("Quantity is not a number")
+
+
+    # Update the create_output_section method to add the "Decrease Quantity" button
     def create_output_section(self):
         # Create widgets for the output section
         label = self.create_label(self.frame_out, "OUT")
-        optionmenu = self.create_option_menu(self.frame_out, self.options)
+        self.output_optionmenu = self.create_option_menu(self.frame_out, self.options)
         qty_label = self.create_label(self.frame_out, "QTY", font=("Arial", 12))
         self.output_quantity = self.create_textbox(self.frame_out, 1, 100, "1-100")
-        apply_button = self.create_button(self.frame_out, "Apply", lambda: print("Hello World 2"))
+        apply_button = self.create_button(self.frame_out, "Decrease Quantity", self.apply_decrease_quantity)
 
     def create_view_section(self, data):
         # Create widgets for the view section
@@ -121,7 +152,18 @@ class LagerApp:
 
     def is_numeric(self, value):
         # Check if a value is numeric
-        return isinstance(value, (int, float))
+        try:
+            # Attempt to convert the value to an integer
+            int_value = int(value)
+            return True
+        except ValueError:
+            try:
+                # Attempt to convert the value to a float
+                float_value = float(value)
+                return True
+            except ValueError:
+                return False
+
 
     def optionmenu_callback(self, choice):
         # Handle OptionMenu dropdown selection event
@@ -139,6 +181,22 @@ class LagerApp:
 
         ok_button = ctk.CTkButton(error_popup, text="OK", command=error_popup.destroy)
         ok_button.pack()
+
+    def show_success_popup(self, message):
+        # Create and display a success popup
+        success_popup = ctk.CTkToplevel(self.window)
+        success_popup.geometry("700x100")
+        success_popup.title("SUCCESS")
+        success_popup.attributes("-top", True)  # Set always on top
+
+        success_label = ctk.CTkLabel(success_popup, text=message, font=("Arial", 20))
+        success_label.pack(pady=10)
+
+        ok_button = ctk.CTkButton(success_popup, text="OK", command=success_popup.destroy)
+        ok_button.pack()
+
+        # Schedule the success_popup window to be destroyed after 5000 milliseconds (5 seconds)
+        success_popup.after(5000, success_popup.destroy)
 
     def run(self):
         # Start the main GUI loop
