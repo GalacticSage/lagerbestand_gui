@@ -116,10 +116,15 @@ class LagerApp:
     def create_export_section(self, data):
         # Create widgets for the export section
         export_button = self.create_button(self.frame_export, "Export", lambda: core.export_to_excel(data))
+        remove_product_button = self.create_button(self.frame_export, "Remove Product", self.show_remove_product_popup)
 
     def create_view_output(self, data):
         # Create a label to display formatted data in the view section
         view_output = self.create_label(self.frame_view_output, core.formatted_data(data), font=("Arial", 20))
+
+    def show_remove_product_popup(self):
+        # Create a pop-up window to remove a product
+        self.remove_product_popup(local_json, self.data)
 
     def create_label(self, parent_frame, text, font=("Arial", 20)):
         # Create a label widget
@@ -231,6 +236,29 @@ class LagerApp:
         product_quantity_textbox.pack(pady=5)
 
         apply_button = ctk.CTkButton(add_product_popup, text="Apply", command=add_item_to_data)
+        apply_button.pack()
+
+    def remove_product_popup(self, lager_json, data):
+        def remove_item_to_data():
+            item_name = product_name_textbox.get("1.0", "end-1c")  # Get the product name from the textbox  # Get the quantity as an integer
+
+            # Call the imported add_item function
+            core.remove_item(lager_json, data, item_name)
+
+            remove_product_popup.destroy()  # Close the pop-up window after adding the item
+
+        remove_product_popup = ctk.CTkToplevel(self.window)
+        remove_product_popup.geometry("300x200")
+        remove_product_popup.title("Product INFO")
+        remove_product_popup.attributes("-top", True)
+
+        product_name_label = ctk.CTkLabel(remove_product_popup, text="Product Name", font=("Arial", 20))
+        product_name_label.pack(pady=5)
+
+        product_name_textbox = ctk.CTkTextbox(remove_product_popup, height=1, width=200)
+        product_name_textbox.pack(pady=5)
+
+        apply_button = ctk.CTkButton(remove_product_popup, text="Apply", command=remove_item_to_data)
         apply_button.pack()
 
     def run(self):
