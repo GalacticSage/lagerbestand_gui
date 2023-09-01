@@ -2,11 +2,12 @@ import tkinter as tk
 from tkinter import filedialog
 
 # Function to read the selected directory from a file
+# Function to read the selected directory from a file
 def read_selected_directory(filename):
     try:
         with open(filename, 'r') as txt_file:
-            directory = txt_file.read().strip()  # Remove leading/trailing whitespace
-            return directory
+            content = txt_file.read().strip()  # Remove leading/trailing whitespace
+            return content
     except FileNotFoundError:
         select_json_and_save()  # Handle the case where the file doesn't exist
         return read_selected_directory(filename)  # Try again after the user has selected a file

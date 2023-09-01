@@ -72,14 +72,14 @@ class LagerApp:
         else:
             self.show_error_popup("Quantity is not a number")
 
-    # Update the create_input_section method to add the "Add Quantity" button
+    # Update the create_input_section method to add the "Increase Quantity" button
     def create_input_section(self):
         # Create widgets for the input section
         label = self.create_label(self.frame_in, "IN")
         self.input_optionmenu = self.create_option_menu(self.frame_in, self.options)
         qty_label = self.create_label(self.frame_in, "QTY", font=("Arial", 12))
         self.input_quantity = self.create_textbox(self.frame_in, 1, 100, "1-100")
-        apply_button = self.create_button(self.frame_in, "Add Quantity", self.apply_add_quantity)
+        apply_button = self.create_button(self.frame_in, "Increase Quantity", self.apply_add_quantity)
 
     def apply_decrease_quantity(self):
         # Get the selected item and quantity to decrease
@@ -108,7 +108,11 @@ class LagerApp:
     def create_view_section(self, data):
         # Create widgets for the view section
         view_button = self.create_button(self.frame_view, "View", lambda: self.create_view_output(data))
+        add_product_button = self.create_button(self.frame_view, "Add Product", self.show_add_product_popup)
 
+    def show_add_product_popup(self):
+        # Create a pop-up window to add a product
+        self.add_product_popup(local_json, self.data)
     def create_export_section(self, data):
         # Create widgets for the export section
         export_button = self.create_button(self.frame_export, "Export", lambda: core.export_to_excel(data))
@@ -197,6 +201,37 @@ class LagerApp:
 
         # Schedule the success_popup window to be destroyed after 5000 milliseconds (5 seconds)
         success_popup.after(5000, success_popup.destroy)
+
+
+    def add_product_popup(self, lager_json, data):
+        def add_item_to_data():
+            item_name = product_name_textbox.get("1.0", "end-1c")  # Get the product name from the textbox
+            quantity = int(product_quantity_textbox.get("1.0", "end-1c"))  # Get the quantity as an integer
+
+            # Call the imported add_item function
+            core.add_item(lager_json, data, item_name, quantity)
+
+            add_product_popup.destroy()  # Close the pop-up window after adding the item
+
+        add_product_popup = ctk.CTkToplevel(self.window)
+        add_product_popup.geometry("300x200")
+        add_product_popup.title("Product INFO")
+        add_product_popup.attributes("-top", True)
+
+        product_name_label = ctk.CTkLabel(add_product_popup, text="Product Name", font=("Arial", 20))
+        product_name_label.pack(pady=5)
+
+        product_name_textbox = ctk.CTkTextbox(add_product_popup, height=1, width=200)
+        product_name_textbox.pack(pady=5)
+
+        product_quantity_label = ctk.CTkLabel(add_product_popup, text="Product Quantity", font=("Arial", 20))
+        product_quantity_label.pack(pady=5)
+
+        product_quantity_textbox = ctk.CTkTextbox(add_product_popup, height=1, width=100)
+        product_quantity_textbox.pack(pady=5)
+
+        apply_button = ctk.CTkButton(add_product_popup, text="Apply", command=add_item_to_data)
+        apply_button.pack()
 
     def run(self):
         # Start the main GUI loop
