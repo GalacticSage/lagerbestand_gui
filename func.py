@@ -1,16 +1,25 @@
 import tkinter as tk
 from tkinter import filedialog
+from lagerbestand_core import core
 
-# Function to read the selected directory from a file
 # Function to read the selected directory from a file
 def read_selected_directory(filename):
     try:
         with open(filename, 'r') as txt_file:
             content = txt_file.read().strip()  # Remove leading/trailing whitespace
-            return content
+            if content=="":
+                select_json_and_save()
+                return read_selected_directory(filename)
+            else:
+                return content
     except FileNotFoundError:
         select_json_and_save()  # Handle the case where the file doesn't exist
         return read_selected_directory(filename)  # Try again after the user has selected a file
+
+
+def clear_selected_directory(filename):
+    with open(filename, 'w') as txt_file:
+        txt_file.write("")
 
 # Function to select a JSON file and save its path
 def select_json_and_save():

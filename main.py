@@ -10,22 +10,47 @@ class LagerApp:
     def __init__(self):
         # Initialize the tkinter window
         self.window = ctk.CTk()
-        self.window.title("Lagerbestand GUI")
+        self.window.title("Inventory Management GUI")
         self.window.geometry("800x700")
         self.window.grid_columnconfigure((0, 1), weight=1)
         self.window.grid_rowconfigure((0, 1, 2), weight=1)
 
-        # Read JSON data from the local JSON file
-        self.data = core.read_json(local_json)
-
-        # Load options from the JSON data
-        self.load_options(self.data)
+        # Load data and options from the local JSON file
+        self.load_data_and_options()
 
         # Create frames for layout
         self.create_frames()
 
         # Create widgets within the frames
         self.create_widgets(self.data)
+
+    def reload_gui(self):
+        # Reload GUI by clearing the window and recreating widgets
+        for widget in self.window.winfo_children():
+            widget.destroy()
+
+        # Reload data and options
+        self.load_data_and_options()
+
+        # Create frames for layout
+        self.create_frames()
+
+        # Create widgets within the frames
+        self.create_widgets(self.data)
+
+    def clear_selected_json(self):
+        # Clear the selected_json.txt file
+        f.clear_selected_directory("selected_json.txt")
+
+        # Stop the program
+        self.window.destroy()
+
+    def load_data_and_options(self):
+        # Read JSON data from the local JSON file
+        self.data = core.read_json(local_json)
+
+        # Load options from the JSON data
+        self.load_options(self.data)
 
     def load_options(self, data):
         # Load available options from the JSON data
@@ -67,6 +92,7 @@ class LagerApp:
         if self.is_numeric(qty_to_add):
             # Increase the quantity in the data dictionary
             core.increase_quantity(local_json, self.data, selected_item, int(qty_to_add))
+
             # Display a success message
             self.show_success_popup(f"Added {qty_to_add} of '{selected_item}' to the inventory.")
         else:
@@ -90,11 +116,11 @@ class LagerApp:
         if self.is_numeric(qty_to_decrease):
             # Decrease the quantity in the data dictionary
             core.decrease_quantity(local_json, self.data, selected_item, int(qty_to_decrease))
+
             # Display a success message
             self.show_success_popup(f"Decreased {qty_to_decrease} of '{selected_item}' from the inventory.")
         else:
             self.show_error_popup("Quantity is not a number")
-
 
     # Update the create_output_section method to add the "Decrease Quantity" button
     def create_output_section(self):
@@ -109,14 +135,17 @@ class LagerApp:
         # Create widgets for the view section
         view_button = self.create_button(self.frame_view, "View", lambda: self.create_view_output(data))
         add_product_button = self.create_button(self.frame_view, "Add Product", self.show_add_product_popup)
+        reload_button = self.create_button(self.frame_view, "Reload", self.reload_gui)
 
     def show_add_product_popup(self):
         # Create a pop-up window to add a product
         self.add_product_popup(local_json, self.data)
+
     def create_export_section(self, data):
         # Create widgets for the export section
         export_button = self.create_button(self.frame_export, "Export", lambda: core.export_to_excel(data))
         remove_product_button = self.create_button(self.frame_export, "Remove Product", self.show_remove_product_popup)
+        reload_button = self.create_button(self.frame_export, "Clear selected JSON", self.clear_selected_json)
 
     def create_view_output(self, data):
         # Create a label to display formatted data in the view section
@@ -148,7 +177,7 @@ class LagerApp:
     def create_button(self, parent_frame, text, command):
         # Create a button widget
         button = ctk.CTkButton(parent_frame, text=text, command=command)
-        button.pack()
+        button.pack(padx=10, pady=10)
         return button
 
     def apply_input(self):
@@ -172,7 +201,6 @@ class LagerApp:
                 return True
             except ValueError:
                 return False
-
 
     def optionmenu_callback(self, choice):
         # Handle OptionMenu dropdown selection event
@@ -207,7 +235,6 @@ class LagerApp:
         # Schedule the success_popup window to be destroyed after 5000 milliseconds (5 seconds)
         success_popup.after(5000, success_popup.destroy)
 
-
     def add_product_popup(self, lager_json, data):
         def add_item_to_data():
             item_name = product_name_textbox.get("1.0", "end-1c")  # Get the product name from the textbox
@@ -217,6 +244,9 @@ class LagerApp:
             core.add_item(lager_json, data, item_name, quantity)
 
             add_product_popup.destroy()  # Close the pop-up window after adding the item
+
+            # Display a success message
+            self.show_success_popup(f"Added {quantity} of '{item_name}' to the inventory.")
 
         add_product_popup = ctk.CTkToplevel(self.window)
         add_product_popup.geometry("300x200")
@@ -240,12 +270,15 @@ class LagerApp:
 
     def remove_product_popup(self, lager_json, data):
         def remove_item_to_data():
-            item_name = product_name_textbox.get("1.0", "end-1c")  # Get the product name from the textbox  # Get the quantity as an integer
+            item_name = remove_optionmenu.get()  # Get the product name from the textbox
 
             # Call the imported add_item function
             core.remove_item(lager_json, data, item_name)
 
             remove_product_popup.destroy()  # Close the pop-up window after adding the item
+
+            # Display a success message
+            self.show_success_popup(f"Removed '{item_name}' from the inventory.")
 
         remove_product_popup = ctk.CTkToplevel(self.window)
         remove_product_popup.geometry("300x200")
@@ -255,8 +288,7 @@ class LagerApp:
         product_name_label = ctk.CTkLabel(remove_product_popup, text="Product Name", font=("Arial", 20))
         product_name_label.pack(pady=5)
 
-        product_name_textbox = ctk.CTkTextbox(remove_product_popup, height=1, width=200)
-        product_name_textbox.pack(pady=5)
+        remove_optionmenu = self.create_option_menu(remove_product_popup, self.options)
 
         apply_button = ctk.CTkButton(remove_product_popup, text="Apply", command=remove_item_to_data)
         apply_button.pack()
