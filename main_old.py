@@ -1,6 +1,6 @@
 import customtkinter as ctk
 from lagerbestand_core import core
-import func as f
+import func_old as f
 
 # Read the local JSON file path from "selected_json.txt"
 local_json = f.read_selected_directory("selected_json.txt")
