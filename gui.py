@@ -1,4 +1,3 @@
-# Import the tkinter module and customtkinter module with an alias ctk
 import tkinter as tk
 import customtkinter as ctk
 
@@ -72,3 +71,11 @@ class Gui:
         button = ctk.CTkButton(parentFrame, text=text, command=command)
         button.pack(pady=10)
         return button
+    
+    def createPopup(parentFrame, title, geometry):
+        # Create and display a popup
+        popup = ctk.CTkToplevel(parentFrame)
+        popup.geometry(geometry)
+        popup.title(title)
+        popup.attributes("-top", True)  # Set always on top
+        return popup

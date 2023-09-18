@@ -29,11 +29,29 @@ class LagerApp:
         self.frameView = Gui.createScrollabelFrame(self.root, 2, 0, 2)
 
         # Create labels, option menu, spinbox widgets and buttons within the frames
+        #FrameIn
         Gui.createLabel(self.frameIn, "IN")
         inOptionMenu = Gui.createOptionMenu(self.frameIn, self.options)
         Gui.createLabel(self.frameIn, "QTY")
         inQtySpinbox = Gui.createSpinbox(self.frameIn, 125, 1)
         Gui.createButton(self.frameIn, "ADD", lambda: print(inQtySpinbox.get()))
+
+        #FrameOut
+        Gui.createLabel(self.frameOut, "OUT")
+        outOptionMenu = Gui.createOptionMenu(self.frameOut, self.options)
+        Gui.createLabel(self.frameOut, "QTY")
+        outQtySpinbox = Gui.createSpinbox(self.frameOut, 125, 1)
+        Gui.createButton(self.frameOut, "ADD", lambda: print(outQtySpinbox.get()))
+
+        #FrameButtonsLeft
+        Gui.createButton(self.frameButtonsLeft, "View", lambda: print("View"))
+        Gui.createButton(self.frameButtonsLeft, "Add Product", lambda: print("Add Product"))
+        Gui.createButton(self.frameButtonsLeft, "Remove Product", lambda: print("Remove Product"))
+
+        #FrameButtonsRight
+        Gui.createButton(self.frameButtonsRight, "Settings", lambda: print("Settings"))
+        Gui.createButton(self.frameButtonsRight, "Reload", lambda: print("Reload"))
+        Gui.createButton(self.frameButtonsRight, "Inventory Check", lambda: print("Inventory Check"))
 
     # Method to start the main GUI loop
     def run(self):
