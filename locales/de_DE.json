@@ -1,0 +1,14 @@
+{
+    "IN": "EIN",
+    "QTY": "MENGE",
+    "Increase": "Erhöhen",
+    "OUT": "AUS",
+    "Decrease": "Verringern",
+    "View": "Ansehen",
+    "Add": "Produkt hinzufügen",
+    "Remove": "Produkt entfernen",
+    "Settings": "Einstellungen",
+    "Reload": "Synchronisieren",
+    "Inventory Check": "Bestandsprüfung",
+    "Language": "Sprache"
+}
