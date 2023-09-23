@@ -5,13 +5,17 @@ from util import Util
 
 # Define a class named LagerApp
 class LagerApp:
-    lang = 'en_US'
-
-    translations = Util.load_translations(lang)
-
-    # Class-level variables for data and options
-    data = None
-    options = None
+    # Class-level variables
+    settingsJsonPath = "settings.json"
+    lagerJsonPath = None
+    avaiableLanguagesJsonPath = "locales/available_languages.json"
+    productData = None
+    productOptions = None
+    settingsData = None
+    langData = None
+    langOptions = None
+    translations = None
+    lang = None
 
     # Default window properties
     windowTitle = "Lager"
@@ -21,11 +25,18 @@ class LagerApp:
 
     # Constructor method
     def __init__(self):
-        # Load data and options using Util class method
-        self.data, self.options = Util.loadDataAndOptions(self, "lager.json")
-
+        self.loadSettings()
+        self.loadTranslations()
         self.createRootAndFrames()
         self.populateFrames()
+
+    def loadSettings(self):
+        self.settingsData = Util.loadData(self, self.settingsJsonPath)
+        self.lang = self.settingsData['Language']
+        self.lagerJsonPath = self.settingsData['LagerJsonPath']
+
+    def loadTranslations(self):
+        self.translations = Util.loadTranslations(self.lang)
 
     def createRootAndFrames(self):
         # Create the main GUI window and frames
@@ -37,16 +48,18 @@ class LagerApp:
         self.frameView = Gui.createScrollabelFrame(self.root, 2, 0, 2)
 
     def populateFrames(self):
+        self.productData, self.productOptions = Util.loadDataAndOptions(self, self.lagerJsonPath, True)
+
         # FrameIn
         Gui.createLabel(self.frameIn, Util.translate(self.translations, "IN"))
-        inOptionMenu = Gui.createOptionMenu(self.frameIn, self.options)
+        inOptionMenu = Gui.createOptionMenu(self.frameIn, self.productOptions)
         Gui.createLabel(self.frameIn, Util.translate(self.translations, "QTY"))
         inQtySpinbox = Gui.createSpinbox(self.frameIn, 125, 1)
         Gui.createButton(self.frameIn, Util.translate(self.translations, "Increase"), lambda: print(inQtySpinbox.get()))
 
         # FrameOut
         Gui.createLabel(self.frameOut, Util.translate(self.translations, "OUT"))
-        outOptionMenu = Gui.createOptionMenu(self.frameOut, self.options)
+        outOptionMenu = Gui.createOptionMenu(self.frameOut, self.productOptions)
         Gui.createLabel(self.frameOut, Util.translate(self.translations, "QTY"))
         outQtySpinbox = Gui.createSpinbox(self.frameOut, 125, 1)
         Gui.createButton(self.frameOut, Util.translate(self.translations, "Decrease"),
@@ -64,9 +77,14 @@ class LagerApp:
         Gui.createButton(self.frameButtonsRight, Util.translate(self.translations, "Reload"), lambda: print("Reload"))
         Gui.createButton(self.frameButtonsRight, Util.translate(self.translations, "Inventory Check"),
                          lambda: print("Inventory Check"))
+
     def settingsMenu(self):
+        self.langData, self.langOptions = Util.loadDataAndOptions(self, self.avaiableLanguagesJsonPath, True)
         settingsPopup = Gui.createPopup(self.frameButtonsRight, "Settings", "400x400")
         Gui.createLabel(settingsPopup, Util.translate(self.translations, "Language"))
+        langOptionMenu = Gui.createOptionMenu(settingsPopup, self.langOptions)
+        Gui.createButton(settingsPopup, Util.translate(self.translations, "Apply"),
+                         lambda: print(langOptionMenu.get()))
 
     # Method to start the main GUI loop
     def run(self):

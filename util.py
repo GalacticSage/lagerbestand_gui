@@ -2,7 +2,7 @@ from lagerbestand_core import core
 import json
 
 class Util:
-    def load_translations(language):
+    def loadTranslations(language):
         try:
             with open(f'locales/{language}.json', 'r', encoding='utf-8') as file:
                 return json.load(file)
@@ -12,9 +12,17 @@ class Util:
     def translate(translations, key):
         return translations.get(key, key)  # Return the key itself if translation not found
 
-    @staticmethod
-    def loadDataAndOptions(self, json_path):
+    def loadData(self, json_path):
         # Load data
         data = core.read_json(json_path)
-        options = list(data.keys())
+        return data
+
+    @staticmethod
+    def loadDataAndOptions(self, json_path, loadKey):
+        # Load data
+        data = core.read_json(json_path)
+        if loadKey:
+            options = list(data.keys())
+        else:
+            options = list(data.values())
         return data, options
