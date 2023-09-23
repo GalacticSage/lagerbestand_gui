@@ -1,4 +1,4 @@
-import tkinter as tk
+from tkinter import filedialog
 import customtkinter as ctk
 
 # Import the IntSpinbox class from intSpinbox module
@@ -79,3 +79,7 @@ class Gui:
         popup.title(title)
         popup.attributes("-top", True)  # Set always on top
         return popup
+
+    def selectExcelSavePath(self):
+        # Create a file dialog and return the selected path
+        return filedialog.asksaveasfilename(filetypes=[("Excel files", "*.xlsx")])

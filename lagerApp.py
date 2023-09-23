@@ -8,7 +8,7 @@ class LagerApp:
     # Class-level variables
     settingsJsonPath = "settings.json"
     lagerJsonPath = None
-    avaiableLanguagesJsonPath = "locales/available_languages.json"
+    availableLanguagesJsonPath = "locales/available_languages.json"
     productData = None
     productOptions = None
     settingsData = None
@@ -29,6 +29,7 @@ class LagerApp:
         self.loadTranslations()
         self.createRootAndFrames()
         self.populateFrames()
+
 
     def loadSettings(self):
         self.settingsData = Util.loadData(self, self.settingsJsonPath)
@@ -79,7 +80,7 @@ class LagerApp:
                          lambda: print("Inventory Check"))
 
     def settingsMenu(self):
-        self.langData, self.langOptions = Util.loadDataAndOptions(self, self.avaiableLanguagesJsonPath, True)
+        self.langData, self.langOptions = Util.loadDataAndOptions(self, self.availableLanguagesJsonPath, True)
         settingsPopup = Gui.createPopup(self.frameButtonsRight, "Settings", "400x400")
         Gui.createLabel(settingsPopup, Util.translate(self.translations, "Language"))
         langOptionMenu = Gui.createOptionMenu(settingsPopup, self.langOptions)

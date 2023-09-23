@@ -1,0 +1,3 @@
+[submodule "lagerbestand_core"]
+	path = lagerbestand_core
+	url = https://github.com/GalacticSage/lagerbestand_core.git

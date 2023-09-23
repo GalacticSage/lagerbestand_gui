@@ -1,4 +1,4 @@
-from lagerbestand_core import core
+from lagerbestand_core import lagerbestand_core as core
 import json
 
 class Util:
