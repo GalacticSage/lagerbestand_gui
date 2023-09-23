@@ -83,3 +83,7 @@ class Gui:
     def selectExcelSavePath(self):
         # Create a file dialog and return the selected path
         return filedialog.asksaveasfilename(filetypes=[("Excel files", "*.xlsx")])
+
+    def selectJsonPath(self):
+        # Create a file dialog and return the selected path
+        return filedialog.askopenfilename(filetypes=[("JSON files", "*.json")])

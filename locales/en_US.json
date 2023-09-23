@@ -11,5 +11,7 @@
     "Reload": "Synchronise",
     "Inventory Check": "Inventory Check",
     "Language": "Language",
-    "Apply": "Apply"
+    "Apply": "Apply",
+    "Reset Settings": "Reset Settings",
+    "Reset": "Reset"
 }

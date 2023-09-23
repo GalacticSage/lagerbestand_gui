@@ -1,7 +1,7 @@
 # Import the Gui and Util classes from respective modules
 from gui import Gui
 from util import Util
-
+from lagerbestand_core import lagerbestand_core as core
 
 # Define a class named LagerApp
 class LagerApp:
@@ -35,6 +35,20 @@ class LagerApp:
         self.settingsData = Util.loadData(self, self.settingsJsonPath)
         self.lang = self.settingsData['Language']
         self.lagerJsonPath = self.settingsData['LagerJsonPath']
+        if self.lagerJsonPath == "" or self.lagerJsonPath is None:
+            self.selectJsonAndSave()
+
+    def resetSettings(self):
+        self.settingsData['Language'] = "en_US"
+        self.settingsData['LagerJsonPath'] = ""
+        core.write_json(self.settingsData, self.settingsJsonPath)
+        restetPopup = Gui.createPopup(self.frameButtonsRight, Util.translate(self.translations, "Close the app"), "600x100")
+        Gui.createLabel(restetPopup, Util.translate(self.translations, "Close the app and restart it to apply the changes."))
+        Gui.createButton(restetPopup, Util.translate(self.translations, "Close"), lambda: self.root.destroy())
+    def selectJsonAndSave(self):
+        self.lagerJsonPath = Gui.selectJsonPath(self)
+        self.settingsData['LagerJsonPath'] = self.lagerJsonPath
+        core.write_json(self.settingsData, self.settingsJsonPath)
 
     def loadTranslations(self):
         self.translations = Util.loadTranslations(self.lang)
@@ -86,6 +100,9 @@ class LagerApp:
         langOptionMenu = Gui.createOptionMenu(settingsPopup, self.langOptions)
         Gui.createButton(settingsPopup, Util.translate(self.translations, "Apply"),
                          lambda: print(langOptionMenu.get()))
+        Gui.createLabel(settingsPopup, Util.translate(self.translations, "Reset Settings"))
+        Gui.createButton(settingsPopup, Util.translate(self.translations, "Reset"),
+                         lambda: self.resetSettings())
 
     # Method to start the main GUI loop
     def run(self):
