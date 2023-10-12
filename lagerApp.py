@@ -16,6 +16,7 @@ class LagerApp:
     langOptions = None
     translations = None
     lang = None
+    labelView = None
 
     # Default window properties
     windowTitle = "Lager"
@@ -78,11 +79,10 @@ class LagerApp:
         outOptionMenu = Gui.createOptionMenu(self.frameOut, self.productOptions)
         Gui.createLabel(self.frameOut, Util.translate(self.translations, "QTY"))
         outQtySpinbox = Gui.createSpinbox(self.frameOut, 125, 1)
-        Gui.createButton(self.frameOut, Util.translate(self.translations, "Decrease"),
-                         lambda: print(outQtySpinbox.get()))
+        Gui.createButton(self.frameOut, Util.translate(self.translations, "Decrease"), lambda: core.decrease_quantity(self.lagerJsonPath, self.productData, outOptionMenu.get(), int(outQtySpinbox.get())))
 
         # FrameButtonsLeft
-        Gui.createButton(self.frameButtonsLeft, Util.translate(self.translations, "View"), lambda: print("View"))
+        Gui.createButton(self.frameButtonsLeft, Util.translate(self.translations, "View"), lambda: self.showItemsInView())
         Gui.createButton(self.frameButtonsLeft, Util.translate(self.translations, "Add"), lambda: print("Add Product"))
         Gui.createButton(self.frameButtonsLeft, Util.translate(self.translations, "Remove"),
                          lambda: print("Remove Product"))
@@ -93,6 +93,9 @@ class LagerApp:
         Gui.createButton(self.frameButtonsRight, Util.translate(self.translations, "Reload"), lambda: print("Reload"))
         Gui.createButton(self.frameButtonsRight, Util.translate(self.translations, "Inventory Check"),
                          lambda: print("Inventory Check"))
+        
+        # FrameView
+        self.labelView = Gui.createLabel(self.frameView, "")
 
     def settingsMenu(self):
         self.langData, self.langOptions = Util.loadDataAndOptions(self, self.availableLanguagesJsonPath, True)
@@ -105,6 +108,9 @@ class LagerApp:
         Gui.createButton(settingsPopup, Util.translate(self.translations, "Reset"),
                          lambda: self.resetSettings())
 
+    def showItemsInView(self):
+        self.labelView.configure(text=core.formatted_data(self.productData))
+    
     # Method to start the main GUI loop
     def run(self):
         # Start the main GUI loop
