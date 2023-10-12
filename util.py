@@ -2,6 +2,20 @@ from lagerbestand_core import lagerbestand_core as core
 import json
 
 class Util:
+
+    def setLanguage(self, language_name):
+        available_languages = core.read_json("locales/available_languages.json")
+        selected_language_code = available_languages.get(language_name)
+
+        if selected_language_code is not None:
+            settings_data = core.read_json("settings.json")
+            settings_data['Language'] = selected_language_code
+            core.write_json(settings_data, "settings.json")
+        else:
+            print(f"The language '{language_name}' is not available.")
+
+        
+    
     def loadTranslations(language):
         try:
             with open(f'locales/{language}.json', 'r', encoding='utf-8') as file:

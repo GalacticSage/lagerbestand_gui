@@ -103,7 +103,7 @@ class LagerApp:
         Gui.createLabel(settingsPopup, Util.translate(self.translations, "Language"))
         langOptionMenu = Gui.createOptionMenu(settingsPopup, self.langOptions)
         Gui.createButton(settingsPopup, Util.translate(self.translations, "Apply"),
-                         lambda: print(langOptionMenu.get()))
+                         lambda: print(Util.setLanguage(self, langOptionMenu.get())))
         Gui.createLabel(settingsPopup, Util.translate(self.translations, "Reset Settings"))
         Gui.createButton(settingsPopup, Util.translate(self.translations, "Reset"),
                          lambda: self.resetSettings())
