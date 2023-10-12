@@ -1,0 +1,18 @@
+{
+    "IN": "IN",
+    "QTY": "QTY",
+    "Increase": "Increase",
+    "OUT": "OUT",
+    "Decrease": "Decrease",
+    "View": "View",
+    "Add": "Add Product",
+    "Remove": "Remove Product",
+    "Settings": "Settings",
+    "Reload": "Synchronize",
+    "Inventory Check": "Inventory Check",
+    "Language": "Language",
+    "Apply": "Apply",
+    "Reset Settings": "Reset Settings",
+    "Reset": "Reset",
+    "Close the app and restart it to apply the changes.": "Close the app and restart it to apply the changes."
+}

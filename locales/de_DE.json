@@ -1,0 +1,18 @@
+{
+    "IN": "Eingang",
+    "QTY": "Menge",
+    "Increase": "Erhöhen",
+    "OUT": "Ausgang",
+    "Decrease": "Verringern",
+    "View": "Anzeigen",
+    "Add": "Produkt hinzufügen",
+    "Remove": "Produkt entfernen",
+    "Settings": "Einstellungen",
+    "Reload": "Synchronisieren",
+    "Inventory Check": "Inventarprüfung",
+    "Language": "Sprache",
+    "Apply": "Anwenden",
+    "Reset Settings": "Einstellungen zurücksetzen",
+    "Reset": "Zurücksetzen",
+    "Close the app and restart it to apply the changes.": "Schließen Sie die App und starten Sie sie neu, um die Änderungen zu übernehmen."
+}
