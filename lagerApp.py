@@ -144,3 +144,7 @@ class LagerApp:
     def run(self):
         # Start the main GUI loop
         self.root.mainloop()
+
+if __name__ == "__main__":
+    app = LagerApp()
+    app.run()
