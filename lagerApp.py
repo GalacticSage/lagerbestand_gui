@@ -45,6 +45,7 @@ class LagerApp:
         restetPopup = Gui.createPopup(self.frameButtonsRight, Util.translate(self.translations, "Close the app"), "600x100")
         Gui.createLabel(restetPopup, Util.translate(self.translations, "Close the app and restart it to apply the changes."))
         Gui.createButton(restetPopup, Util.translate(self.translations, "Close"), lambda: self.root.destroy())
+        
     def selectJsonAndSave(self):
         self.lagerJsonPath = Gui.selectJsonPath(self)
         self.settingsData['LagerJsonPath'] = self.lagerJsonPath
@@ -70,7 +71,7 @@ class LagerApp:
         inOptionMenu = Gui.createOptionMenu(self.frameIn, self.productOptions)
         Gui.createLabel(self.frameIn, Util.translate(self.translations, "QTY"))
         inQtySpinbox = Gui.createSpinbox(self.frameIn, 125, 1)
-        Gui.createButton(self.frameIn, Util.translate(self.translations, "Increase"), lambda: print(inQtySpinbox.get()))
+        Gui.createButton(self.frameIn, Util.translate(self.translations, "Increase"), lambda: core.increase_quantity(self.lagerJsonPath, self.productData, inOptionMenu.get(), int(inQtySpinbox.get())))
 
         # FrameOut
         Gui.createLabel(self.frameOut, Util.translate(self.translations, "OUT"))

@@ -54,7 +54,7 @@ class IntSpinbox(ctk.CTkFrame):
         if self.command is not None:
             self.command()
         try:
-            value = int(self.entry.get()) - self.step_size
+            value = max(0, int(self.entry.get()) - self.step_size)  # Ensure value doesn't go below 0
             self.entry.delete(0, "end")
             self.entry.insert(0, value)
         except ValueError:
