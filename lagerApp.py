@@ -83,16 +83,16 @@ class LagerApp:
 
         # FrameButtonsLeft
         Gui.createButton(self.frameButtonsLeft, Util.translate(self.translations, "View"), lambda: self.showItemsInView())
-        Gui.createButton(self.frameButtonsLeft, Util.translate(self.translations, "Add"), lambda: print("Add Product"))
+        Gui.createButton(self.frameButtonsLeft, Util.translate(self.translations, "Add"), lambda: self.showAddItem())
         Gui.createButton(self.frameButtonsLeft, Util.translate(self.translations, "Remove"),
-                         lambda: print("Remove Product"))
+                         lambda: self.showRemoveItem())
 
         # FrameButtonsRight
         Gui.createButton(self.frameButtonsRight, Util.translate(self.translations, "Settings"),
                          lambda: self.settingsMenu())
-        Gui.createButton(self.frameButtonsRight, Util.translate(self.translations, "Reload"), lambda: print("Reload"))
+        Gui.createButton(self.frameButtonsRight, Util.translate(self.translations, "Reload"), lambda: self.reloadGUI())
         Gui.createButton(self.frameButtonsRight, Util.translate(self.translations, "Inventory Check"),
-                         lambda: print("Inventory Check"))
+                         lambda: self.showInventoryCheck())
         
         # FrameView
         self.labelView = Gui.createLabel(self.frameView, "")
@@ -103,13 +103,42 @@ class LagerApp:
         Gui.createLabel(settingsPopup, Util.translate(self.translations, "Language"))
         langOptionMenu = Gui.createOptionMenu(settingsPopup, self.langOptions)
         Gui.createButton(settingsPopup, Util.translate(self.translations, "Apply"),
-                         lambda: print(Util.setLanguage(self, langOptionMenu.get())))
+                         lambda: [Util.setLanguage(self, langOptionMenu.get()), settingsPopup.destroy()])
         Gui.createLabel(settingsPopup, Util.translate(self.translations, "Reset Settings"))
         Gui.createButton(settingsPopup, Util.translate(self.translations, "Reset"),
                          lambda: self.resetSettings())
+        Gui.createLabel(settingsPopup, Util.translate(self.translations, "Export"))
+        Gui.createButton(settingsPopup, Util.translate(self.translations, "Export as Excel"), lambda: [core.export_to_excel(self.productData, filePath=Gui.selectExcelSavePath(self)), settingsPopup.destroy()])
 
     def showItemsInView(self):
         self.labelView.configure(text=core.formatted_data(self.productData))
+    
+    def showAddItem(self):
+        popup = Gui.createPopup(self.root, Util.translate(self.translations, "Add Item"), "400x400")
+        Gui.createLabel(popup, Util.translate(self.translations, "Item Name"))
+        itemNameEntry = Gui.createEntry(self, popup)
+        Gui.createLabel(popup, Util.translate(self.translations, "QTY"))
+        addItemQtySpinbox = Gui.createSpinbox(popup, 125, 1)
+        Gui.createButton(popup, Util.translate(self.translations, "Add"), lambda: [core.add_item(self.lagerJsonPath, self.productData, itemNameEntry.get(), int(addItemQtySpinbox.get())), popup.destroy()])
+        
+    def showRemoveItem(self):
+        popup = Gui.createPopup(self.root, Util.translate(self.translations, "Remove Item"), "400x400")
+        Gui.createLabel(popup, Util.translate(self.translations, "Item Name"))
+        removeItemOptionMenu = Gui.createOptionMenu(popup, self.productOptions)
+        Gui.createButton(popup, Util.translate(self.translations, "Remove"), lambda: [core.remove_item(self.lagerJsonPath, self.productData, removeItemOptionMenu.get()), popup.destroy()])
+    
+    def showInventoryCheck(self):
+        self.labelView.configure(text=core.formatted_data(Util.filter_values_under_five(self, self.productData)))
+        
+    
+    def reloadGUI(self):
+        # Close the current GUI
+        self.root.destroy()
+
+        # Create a new instance of LagerApp and run it
+        app = LagerApp()
+        app.run()
+        
     
     # Method to start the main GUI loop
     def run(self):

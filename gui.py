@@ -79,10 +79,19 @@ class Gui:
         popup.title(title)
         popup.attributes("-top", True)  # Set always on top
         return popup
+    
+    def createEntry(self, parentFrame):
+        # Create an entry widget using customtkinter
+        entry = ctk.CTkEntry(parentFrame)
+        entry.pack(pady=10)
+        return entry
 
     def selectExcelSavePath(self):
         # Create a file dialog and return the selected path
-        return filedialog.asksaveasfilename(filetypes=[("Excel files", "*.xlsx")])
+        path = filedialog.asksaveasfilename(filetypes=[("Excel files", "*.xlsx")])
+        if not path.endswith(".xlsx"):
+            path += ".xlsx"
+        return path
 
     def selectJsonPath(self):
         # Create a file dialog and return the selected path

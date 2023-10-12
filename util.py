@@ -40,3 +40,16 @@ class Util:
         else:
             options = list(data.values())
         return data, options
+    
+    def filter_values_under_five(self, input_dict):
+        new_dict = {}
+
+        for key, value in input_dict.items():
+            try:
+                value_as_int = int(value)
+                if value_as_int < 5:
+                    new_dict[key] = value_as_int
+            except ValueError:
+                pass
+
+        return new_dict
