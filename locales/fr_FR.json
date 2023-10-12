@@ -1,0 +1,18 @@
+{
+    "IN": "ENTRÉE",
+    "QTY": "QTÉ",
+    "Increase": "Augmenter",
+    "OUT": "SORTIE",
+    "Decrease": "Diminuer",
+    "View": "Voir",
+    "Add": "Ajouter un Produit",
+    "Remove": "Supprimer un Produit",
+    "Settings": "Paramètres",
+    "Reload": "Synchroniser",
+    "Inventory Check": "Vérification d'Inventaire",
+    "Language": "Langue",
+    "Apply": "Appliquer",
+    "Reset Settings": "Réinitialiser les Paramètres",
+    "Reset": "Réinitialiser",
+    "Close the app and restart it to apply the changes.": "Fermez l'application et redémarrez-la pour appliquer les modifications."
+}

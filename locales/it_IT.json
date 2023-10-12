@@ -1,15 +1,19 @@
 {
-    "IN": "DENTRO",
+    "IN": "ENTRATA",
     "QTY": "QTA",
     "Increase": "Aumentare",
-    "OUT": "FUORI",
+    "OUT": "USCITA",
     "Decrease": "Diminuire",
-    "View": "Vedi",
+    "View": "Visualizzare",
     "Add": "Aggiungi Prodotto",
     "Remove": "Rimuovi Prodotto",
     "Settings": "Impostazioni",
     "Reload": "Sincronizza",
     "Inventory Check": "Controllo Inventario",
     "Language": "Lingua",
-    "Apply": "Applica"
+    "Apply": "Applica",
+    "Reset Settings": "Ripristina Impostazioni",
+    "Reset": "Ripristina",
+    "Close the app and restart it to apply the changes.": "Chiudere l'app e riavviarla per applicare le modifiche."
 }
+
